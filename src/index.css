@@ -141,3 +141,11 @@ input:focus {
     font-size: 0.9rem;
   }
 }
+
+/* Loader Spinner Style */
+div[style*="padding: 20px; text-align: center;"] {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100px;
+}
