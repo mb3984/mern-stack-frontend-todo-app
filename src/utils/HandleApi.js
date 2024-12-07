@@ -7,7 +7,7 @@ const getAllToDo = (setToDo, setIsLoading) => {
   axios
     .get(baseUrl)
     .then(({ data }) => {
-      setToDo(data.map((todo) => ({ ...todo, completed: false })));
+      setToDo(data); // No need to modify this, as the backend now sends completed status
       setIsLoading(false); // Hide loader when the request finishes
     })
     .catch((error) => {
@@ -16,10 +16,10 @@ const getAllToDo = (setToDo, setIsLoading) => {
     });
 };
 
-const addToDo = (text, setText, setTodo, setIsLoading) => {
+const addToDo = (text, completed, setText, setTodo, setIsLoading) => {
   setIsLoading(true); // Show loader
   axios
-    .post(`${baseUrl}/save`, { text })
+    .post(`${baseUrl}/save`, { text, completed })
     .then(() => {
       alert("Todo Added Successfully");
       getAllToDo(setTodo, setIsLoading);
@@ -34,6 +34,7 @@ const addToDo = (text, setText, setTodo, setIsLoading) => {
 const updateToDo = (
   toDoId,
   text,
+  completed,
   setTodo,
   setText,
   setIsUpdating,
@@ -41,7 +42,7 @@ const updateToDo = (
 ) => {
   setIsLoading(true); // Show loader
   axios
-    .put(`${baseUrl}/update`, { _id: toDoId, text })
+    .put(`${baseUrl}/update`, { _id: toDoId, text, completed })
     .then(() => {
       alert("Todo Updated Successfully");
       getAllToDo(setTodo, setIsLoading);

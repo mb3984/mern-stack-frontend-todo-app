@@ -1,18 +1,18 @@
 import ToDo from "./components/ToDo";
 import { useState, useEffect } from "react";
 import { addToDo, getAllToDo, updateToDo, deleteToDo } from "./utils/HandleApi";
-import { ThreeDots } from "react-loader-spinner"; // Correct import for loader
+import { ThreeDots } from "react-loader-spinner";
 
 function App() {
   const [toDo, setToDo] = useState([]);
   const [text, setText] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
   const [toDoId, setToDoId] = useState("");
-  const [searchText, setSearchText] = useState(""); // New state for search text
-  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [searchText, setSearchText] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    getAllToDo(setToDo, setIsLoading); // Fetch todos and manage loading state
+    getAllToDo(setToDo, setIsLoading);
   }, []);
 
   const updateMode = (_id, text) => {
@@ -21,7 +21,6 @@ function App() {
     setToDoId(_id);
   };
 
-  // Filtered to-do list based on search text
   const filteredToDo = toDo.filter((item) =>
     item.text.toLowerCase().includes(searchText.toLowerCase())
   );
@@ -51,12 +50,13 @@ function App() {
                     updateToDo(
                       toDoId,
                       text,
+                      toDo.find((todo) => todo._id === toDoId)?.completed,
                       setToDo,
                       setText,
                       setIsUpdating,
                       setIsLoading
                     )
-                : () => addToDo(text, setText, setToDo, setIsLoading)
+                : () => addToDo(text, false, setText, setToDo, setIsLoading) // default completed to false when adding new todo
             }
           >
             {isUpdating ? "Update" : "Add"}
@@ -70,8 +70,7 @@ function App() {
             onChange={(e) => setSearchText(e.target.value)}
           />
         </div>
-        {isLoading && renderLoadingView()}{" "}
-        {/* Display loader if isLoading is true */}
+        {isLoading && renderLoadingView()}
         <div className="list">
           {filteredToDo.map((item) => (
             <ToDo
@@ -79,16 +78,26 @@ function App() {
               text={item.text}
               completed={item.completed}
               toggleComplete={() => {
+                const updatedCompletedStatus = !item.completed;
                 setToDo((prev) =>
                   prev.map((todo) =>
                     todo._id === item._id
-                      ? { ...todo, completed: !todo.completed }
+                      ? { ...todo, completed: updatedCompletedStatus }
                       : todo
                   )
                 );
+                updateToDo(
+                  item._id,
+                  item.text,
+                  updatedCompletedStatus,
+                  setToDo,
+                  setText,
+                  setIsUpdating,
+                  setIsLoading
+                );
               }}
               updateMode={() => updateMode(item._id, item.text)}
-              deleteToDo={() => deleteToDo(item._id, setToDo, setIsLoading)} // Pass setIsLoading to delete
+              deleteToDo={() => deleteToDo(item._id, setToDo, setIsLoading)}
             />
           ))}
         </div>

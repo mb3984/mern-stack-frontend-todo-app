@@ -2,13 +2,20 @@ import React from "react";
 import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 
-const ToDo = ({ text, updateMode, deleteToDo, completed, toggleComplete }) => {
+const ToDo = ({
+  text,
+  updateMode,
+  deleteToDo,
+  completed,
+  toggleComplete,
+  id,
+}) => {
   return (
     <div className="todo">
       <input
         type="checkbox"
         checked={completed}
-        onChange={toggleComplete}
+        onChange={() => toggleComplete(id, completed)} // Pass id and completed to toggle
         className="checkbox"
       />
       <span
